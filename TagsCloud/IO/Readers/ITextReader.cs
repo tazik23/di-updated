@@ -1,4 +1,4 @@
-namespace TagsCloud.TextProcessing.Readers;
+namespace TagsCloud.IO.Readers;
 
 public interface ITextReader
 {
