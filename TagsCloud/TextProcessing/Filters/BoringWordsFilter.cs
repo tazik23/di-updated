@@ -8,7 +8,7 @@ public class BoringWordsFilter : IWordFilter
     {
         _boringWords = boringWords;
     }
-    
+
     public bool ShouldExclude(string word)
     {
         return _boringWords.Contains(word);

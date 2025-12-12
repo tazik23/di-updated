@@ -4,34 +4,34 @@ namespace TagsCloud.Layout.Layouters;
 
 public class QuadTree
 {
-    private readonly List<Rectangle> elements = new();
-    private readonly int bucketCapacity;
-    private readonly int maxDepth;
-    private readonly int level;
+    private readonly List<Rectangle> _elements = new();
+    private readonly int _bucketCapacity;
+    private readonly int _maxDepth;
+    private readonly int _level;
 
-    private QuadTree? upperLeft;
-    private QuadTree? upperRight;
-    private QuadTree? bottomLeft;
-    private QuadTree? bottomRight;
+    private QuadTree? _upperLeft;
+    private QuadTree? _upperRight;
+    private QuadTree? _bottomLeft;
+    private QuadTree? _bottomRight;
 
-    private Rectangle bounds;
+    private Rectangle _bounds;
 
-    public bool IsLeaf => upperLeft == null;
+    public bool IsLeaf => _upperLeft == null;
 
     public QuadTree(Rectangle bounds, int bucketCapacity = 32, int maxDepth = 5, int level = 0)
     {
-        this.bounds = bounds;
-        this.bucketCapacity = bucketCapacity;
-        this.maxDepth = maxDepth;
-        this.level = level;
+        _bounds = bounds;
+        _bucketCapacity = bucketCapacity;
+        _maxDepth = maxDepth;
+        _level = level;
     }
 
     public void Insert(Rectangle element)
     {
-        if (!bounds.Contains(element))
+        if (!_bounds.Contains(element))
             ExpandBounds(element);
 
-        if (elements.Count >= bucketCapacity)
+        if (_elements.Count >= _bucketCapacity)
             Split();
 
         var containingChild = GetContainingChild(element);
@@ -39,7 +39,7 @@ public class QuadTree
         if (containingChild != null)
             containingChild.Insert(element);
         else
-            elements.Add(element);
+            _elements.Add(element);
     }
 
     public bool HasIntersection(Rectangle element)
@@ -51,26 +51,26 @@ public class QuadTree
         {
             var node = nodes.Dequeue();
 
-            if (!element.IntersectsWith(node.bounds))
+            if (!element.IntersectsWith(node._bounds))
                 continue;
 
-            foreach (var item in node.elements)
+            foreach (var item in node._elements)
                 if (item != element && element.IntersectsWith(item))
                     return true;
 
             if (node.IsLeaf) continue;
 
-            if (node.upperLeft != null && element.IntersectsWith(node.upperLeft.bounds))
-                nodes.Enqueue(node.upperLeft);
+            if (node._upperLeft != null && element.IntersectsWith(node._upperLeft._bounds))
+                nodes.Enqueue(node._upperLeft);
 
-            if (node.upperRight != null && element.IntersectsWith(node.upperRight.bounds))
-                nodes.Enqueue(node.upperRight);
+            if (node._upperRight != null && element.IntersectsWith(node._upperRight._bounds))
+                nodes.Enqueue(node._upperRight);
 
-            if (node.bottomLeft != null && element.IntersectsWith(node.bottomLeft.bounds))
-                nodes.Enqueue(node.bottomLeft);
+            if (node._bottomLeft != null && element.IntersectsWith(node._bottomLeft._bounds))
+                nodes.Enqueue(node._bottomLeft);
 
-            if (node.bottomRight != null && element.IntersectsWith(node.bottomRight.bounds))
-                nodes.Enqueue(node.bottomRight);
+            if (node._bottomRight != null && element.IntersectsWith(node._bottomRight._bounds))
+                nodes.Enqueue(node._bottomRight);
         }
 
         return false;
@@ -78,16 +78,16 @@ public class QuadTree
 
     private void Clear()
     {
-        elements.Clear();
-        upperLeft = upperRight = bottomLeft = bottomRight = null;
+        _elements.Clear();
+        _upperLeft = _upperRight = _bottomLeft = _bottomRight = null;
     }
 
     private void ExpandBounds(Rectangle newElement)
     {
-        var minX = Math.Min(bounds.X, newElement.X);
-        var minY = Math.Min(bounds.Y, newElement.Y);
-        var maxX = Math.Max(bounds.Right, newElement.Right);
-        var maxY = Math.Max(bounds.Bottom, newElement.Bottom);
+        var minX = Math.Min(_bounds.X, newElement.X);
+        var minY = Math.Min(_bounds.Y, newElement.Y);
+        var maxX = Math.Max(_bounds.Right, newElement.Right);
+        var maxY = Math.Max(_bounds.Bottom, newElement.Bottom);
 
         var width = maxX - minX;
         var height = maxY - minY;
@@ -113,21 +113,21 @@ public class QuadTree
 
         Clear();
 
-        bounds = newBounds;
+        _bounds = newBounds;
 
         foreach (var element in allElements) Insert(element);
     }
 
     private List<Rectangle> GetAllElements()
     {
-        var result = new List<Rectangle>(elements);
+        var result = new List<Rectangle>(_elements);
 
         if (!IsLeaf)
         {
-            result.AddRange(upperLeft.GetAllElements());
-            result.AddRange(upperRight.GetAllElements());
-            result.AddRange(bottomLeft.GetAllElements());
-            result.AddRange(bottomRight.GetAllElements());
+            result.AddRange(_upperLeft.GetAllElements());
+            result.AddRange(_upperRight.GetAllElements());
+            result.AddRange(_bottomLeft.GetAllElements());
+            result.AddRange(_bottomRight.GetAllElements());
         }
 
         return result;
@@ -138,38 +138,38 @@ public class QuadTree
         if (!IsLeaf)
             return;
 
-        if (level + 1 > maxDepth)
+        if (_level + 1 > _maxDepth)
             return;
 
-        var halfWidth = bounds.Width / 2;
-        var halfHeight = bounds.Height / 2;
-        var x = bounds.X;
-        var y = bounds.Y;
+        var halfWidth = _bounds.Width / 2;
+        var halfHeight = _bounds.Height / 2;
+        var x = _bounds.X;
+        var y = _bounds.Y;
 
-        upperLeft = new QuadTree(
+        _upperLeft = new QuadTree(
             new Rectangle(x, y, halfWidth, halfHeight),
-            bucketCapacity, maxDepth, level + 1);
+            _bucketCapacity, _maxDepth, _level + 1);
 
-        upperRight = new QuadTree(
+        _upperRight = new QuadTree(
             new Rectangle(x + halfWidth, y, halfWidth, halfHeight),
-            bucketCapacity, maxDepth, level + 1);
+            _bucketCapacity, _maxDepth, _level + 1);
 
-        bottomLeft = new QuadTree(
+        _bottomLeft = new QuadTree(
             new Rectangle(x, y + halfHeight, halfWidth, halfHeight),
-            bucketCapacity, maxDepth, level + 1);
+            _bucketCapacity, _maxDepth, _level + 1);
 
-        bottomRight = new QuadTree(
+        _bottomRight = new QuadTree(
             new Rectangle(x + halfWidth, y + halfHeight, halfWidth, halfHeight),
-            bucketCapacity, maxDepth, level + 1);
+            _bucketCapacity, _maxDepth, _level + 1);
 
-        var elements = this.elements.ToList();
+        var elements = _elements.ToList();
 
         foreach (var element in elements)
         {
             var containingChild = GetContainingChild(element);
             if (containingChild != null)
             {
-                this.elements.Remove(element);
+                _elements.Remove(element);
                 containingChild.Insert(element);
             }
         }
@@ -179,8 +179,8 @@ public class QuadTree
     {
         if (IsLeaf) return null;
 
-        foreach (var child in new[] { upperLeft, upperRight, bottomLeft, bottomRight })
-            if (child != null && child.bounds.Contains(element))
+        foreach (var child in new[] { _upperLeft, _upperRight, _bottomLeft, _bottomRight })
+            if (child != null && child._bounds.Contains(element))
                 return child;
 
         return null;

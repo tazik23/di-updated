@@ -4,7 +4,7 @@ using TagsCloud.TextProcessing.Tokenizers;
 
 namespace TagsCloud.TextProcessing;
 
-public class TextProcessor
+public class TextProcessor : ITextProcessor
 {
     private readonly ITokenizer _tokenizer;
     private readonly IWordNormalizer[] _normalizers;
@@ -26,7 +26,7 @@ public class TextProcessor
             var normalized = _normalizers
                 .Aggregate(word, (current, normalizer) => normalizer.Normalize(current));
 
-            if(!_filters.Any(f => f.ShouldExclude(normalized)))
+            if (!_filters.Any(f => f.ShouldExclude(normalized)))
                 yield return normalized;
         }
     }

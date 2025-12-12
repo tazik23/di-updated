@@ -6,16 +6,16 @@ namespace TagsCloud.Layout.Layouters;
 
 public class SpiralLayouter : ILayouter
 {
-    private readonly ISpiral spiral;
-    private readonly List<Rectangle> rectangles = new();
-    private readonly QuadTree quadTree;
+    private readonly ISpiral _spiral;
+    private readonly List<Rectangle> _rectangles = new();
+    private readonly QuadTree _quadTree;
 
-    public IReadOnlyList<Rectangle> Rectangles => rectangles.AsReadOnly();
+    public IReadOnlyList<Rectangle> Rectangles => _rectangles.AsReadOnly();
 
     public SpiralLayouter(ISpiral spiral)
     {
-        this.spiral = spiral;
-        quadTree = new QuadTree(new Rectangle(
+        _spiral = spiral;
+        _quadTree = new QuadTree(new Rectangle(
             spiral.Center.X,
             spiral.Center.Y,
             1000,
@@ -27,8 +27,8 @@ public class SpiralLayouter : ILayouter
         var rectangle = GetValidPosition(rectangleSize);
         rectangle = TryMoveToCenter(rectangle);
 
-        rectangles.Add(rectangle);
-        quadTree.Insert(rectangle);
+        _rectangles.Add(rectangle);
+        _quadTree.Insert(rectangle);
 
         return rectangle;
     }
@@ -38,7 +38,7 @@ public class SpiralLayouter : ILayouter
         Rectangle rectangle;
         do
         {
-            var candidatePoint = spiral.GetNextPoint();
+            var candidatePoint = _spiral.GetNextPoint();
             rectangle = CreateRectangleWithCenterAt(candidatePoint, rectangleSize);
         } while (HasIntersections(rectangle));
 
@@ -47,7 +47,7 @@ public class SpiralLayouter : ILayouter
 
     private Rectangle TryMoveToCenter(Rectangle rectangle, int maxIterationsToTry = 10000)
     {
-        if (rectangles.Count == 0)
+        if (_rectangles.Count == 0)
             return rectangle;
 
         var current = rectangle;
@@ -97,15 +97,15 @@ public class SpiralLayouter : ILayouter
     {
         return axis switch
         {
-            Axis.X => new Point(-Math.Sign(point.X - spiral.Center.X), 0),
-            Axis.Y => new Point(0, -Math.Sign(point.Y - spiral.Center.Y)),
+            Axis.X => new Point(-Math.Sign(point.X - _spiral.Center.X), 0),
+            Axis.Y => new Point(0, -Math.Sign(point.Y - _spiral.Center.Y)),
             _ => new Point(0, 0)
         };
     }
 
     private bool HasIntersections(Rectangle rectangle)
     {
-        return quadTree.HasIntersection(rectangle);
+        return _quadTree.HasIntersection(rectangle);
     }
 
     private static Rectangle CreateRectangleWithCenterAt(Point center, Size size)
