@@ -1,5 +1,5 @@
-using System.Drawing;
 using Autofac;
+using Clients.Applications;
 using TagsCloud.Configurations;
 using TagsCloud.IO.Readers;
 using TagsCloud.IO.Savers;
@@ -15,56 +15,21 @@ using TagsCloud.WordAnalysis;
 using TagsCloud.WordMetricsCalculation;
 using TextReader = TagsCloud.IO.Readers.TextReader;
 
-namespace Clients.Applications.AppBuilders;
+namespace Clients.Di;
 
-public static class BuilderExtensions
+public static class ServiceConfiguration
 {
-    public static void ConfigureSettings(this ContainerBuilder builder, CommandLineArgs args)
-    {
-        builder.RegisterInstance(args)
-               .AsSelf()
-               .SingleInstance();
-        
-        builder.Register(_ => new FontSettings(
-            new FontFamily(args.FontFamily),
-            args.MinFontSize,
-            args.MaxFontSize
-        )).AsSelf().SingleInstance();
-
-        builder.Register(_ => new LayoutSettings(
-            new Point(args.CenterX ?? 400, args.CenterY ?? 300),
-            args.Shape
-        )).AsSelf().SingleInstance();
-
-        builder.Register(_ => new VisualizationSettings(
-            ParseColor(args.BackgroundColor),
-            ParseColor(args.TextColor),
-            new Size(args.ImageWidth, args.ImageHeight)
-        )).AsSelf().SingleInstance();
-        
-        builder.Register(ctx =>
-        {
-            var fontSettings = ctx.Resolve<FontSettings>();
-            var layoutSettings = ctx.Resolve<LayoutSettings>();
-            var visualizationSettings = ctx.Resolve<VisualizationSettings>();
-            
-            return new CloudSettings(
-                args.InputFile,
-                args.OutputFile,
-                fontSettings,
-                layoutSettings,
-                visualizationSettings
-            );
-        }).AsSelf().SingleInstance();
-    }
 
     public static void AddServices(this ContainerBuilder builder)
     {
         builder.RegisterType<TextReader>().As<ITextReader>();
         builder.RegisterType<PngImageSaver>().As<IImageSaver>();
 
-        builder.RegisterType<Tokenizer>().As<ITokenizer>()
-               .WithParameter("separators", new[] { " ", "\t", "\r\n", "\n", "\r" });
+        builder.Register(ctx =>
+        {
+            var settings = ctx.Resolve<CloudSettings>();
+            return new Tokenizer(settings.Separators);
+        }).As<ITokenizer>();
 
         builder.RegisterType<LowerCaseNormalizer>().As<IWordNormalizer>();
 
@@ -96,29 +61,7 @@ public static class BuilderExtensions
 
         builder.RegisterType<ConsoleTagCloudApplication>().AsSelf();
     }
-
-    private static Color ParseColor(string? color)
-    {
-        if (string.IsNullOrWhiteSpace(color))
-            throw new ArgumentException($"Unable to parse color {color}");
-
-        try
-        {
-            return Color.FromName(color);
-        }
-        catch
-        {
-            try
-            {
-                return ColorTranslator.FromHtml(color);
-            }
-            catch
-            {
-                throw new ArgumentException($"Unable to parse color {color}");
-            }
-        }
-    }
-
+    
     private static HashSet<string> GetDefaultBoringWords()
     {
         return new HashSet<string>(StringComparer.OrdinalIgnoreCase)
