@@ -1,5 +1,4 @@
 using CommandLine;
-using TagsCloud.Layout;
 using TagsCloud.Layout.Layouters.Geometry;
 
 namespace Clients;
@@ -12,7 +11,7 @@ public class CommandLineOptions
     [Option('o', "output", Required = true, HelpText = "Output image file path (.png)")]
     public string OutputFile { get; set; } = string.Empty;
 
-    [Option("font-family", Default = "Arial", HelpText = "Font family name")]
+    [Option('f', "font", Default = "Arial", HelpText = "Font family name")]
     public string FontFamily { get; set; } = null!;
 
     [Option("min-font-size", Default = 10, HelpText = "Minimum font size")]
@@ -43,4 +42,8 @@ public class CommandLineOptions
 
     [Option("image-height", Default = 600, HelpText = "Image height in pixels")]
     public int ImageHeight { get; set; }
+    
+    [Option("separators", Default = " ,.\t\r\n", 
+        HelpText = "Word separators. Use escape sequences: \\t for tab, \\n for newline, \\r for carriage return. Default: \" ,.\\t\\r\\n\"")]
+    public string? Separators { get; set; }
 }

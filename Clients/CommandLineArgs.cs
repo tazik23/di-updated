@@ -14,4 +14,5 @@ public record CommandLineArgs(
     string BackgroundColor,
     string TextColor,
     int ImageWidth,
-    int ImageHeight);
+    int ImageHeight, 
+    string Separators);

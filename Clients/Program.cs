@@ -1,5 +1,5 @@
 ﻿using Clients.Applications;
-using Clients.Applications.AppBuilders;
+using Clients.Di;
 using CommandLine;
 
 namespace Clients;
@@ -26,7 +26,8 @@ public class Program
             options.BackgroundColor,
             options.TextColor,
             options.ImageWidth,
-            options.ImageHeight
+            options.ImageHeight,
+            options.Separators
         );
         try
         {

@@ -6,9 +6,7 @@ public class Tokenizer : ITokenizer
 
     public Tokenizer(string[] separators)
     {
-        _separators = separators.Length > 0
-            ? separators
-            : ["\r\n", "\n", "\r"];
+        _separators = separators;
     }
 
     public IEnumerable<string> Tokenize(string text)
