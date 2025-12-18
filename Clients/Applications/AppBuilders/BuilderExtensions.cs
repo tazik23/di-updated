@@ -21,40 +21,41 @@ public static class BuilderExtensions
 {
     public static void ConfigureSettings(this ContainerBuilder builder, CommandLineArgs args)
     {
-        builder.RegisterInstance(args).As<CommandLineArgs>().SingleInstance();
+        builder.RegisterInstance(args)
+               .AsSelf()
+               .SingleInstance();
+        
+        builder.Register(_ => new FontSettings(
+            new FontFamily(args.FontFamily),
+            args.MinFontSize,
+            args.MaxFontSize
+        )).AsSelf().SingleInstance();
 
+        builder.Register(_ => new LayoutSettings(
+            new Point(args.CenterX ?? 400, args.CenterY ?? 300),
+            args.Shape
+        )).AsSelf().SingleInstance();
+
+        builder.Register(_ => new VisualizationSettings(
+            ParseColor(args.BackgroundColor),
+            ParseColor(args.TextColor),
+            new Size(args.ImageWidth, args.ImageHeight)
+        )).AsSelf().SingleInstance();
+        
         builder.Register(ctx =>
         {
-            var cmdArgs = ctx.Resolve<CommandLineArgs>();
-            return new CloudSettings
-            {
-                InputPath = cmdArgs.InputFile,
-                OutputPath = cmdArgs.OutputFile,
-                FontSettings = new FontSettings
-                {
-                    FontFamily = new FontFamily(cmdArgs.FontFamily),
-                    MinFontSize = cmdArgs.MinFontSize,
-                    MaxFontSize = cmdArgs.MaxFontSize
-                },
-                LayoutOptions = new LayoutSettings
-                {
-                    Center = new Point(
-                        cmdArgs.CenterX ?? cmdArgs.ImageWidth / 2,
-                        cmdArgs.CenterY ?? cmdArgs.ImageHeight / 2),
-                    Shape = cmdArgs.Shape
-                },
-                VisualizationSettings = new VisualizationSettings
-                {
-                    BackgroundColor = ParseColor(cmdArgs.BackgroundColor) ?? Color.White,
-                    TextColor = ParseColor(cmdArgs.TextColor) ?? Color.Black,
-                    ImageSize = new Size(cmdArgs.ImageWidth, cmdArgs.ImageHeight)
-                }
-            };
-        }).As<CloudSettings>().SingleInstance();
-
-        builder.Register(ctx => ctx.Resolve<CloudSettings>().FontSettings).As<FontSettings>();
-        builder.Register(ctx => ctx.Resolve<CloudSettings>().LayoutOptions).As<LayoutSettings>();
-        builder.Register(ctx => ctx.Resolve<CloudSettings>().VisualizationSettings).As<VisualizationSettings>();
+            var fontSettings = ctx.Resolve<FontSettings>();
+            var layoutSettings = ctx.Resolve<LayoutSettings>();
+            var visualizationSettings = ctx.Resolve<VisualizationSettings>();
+            
+            return new CloudSettings(
+                args.InputFile,
+                args.OutputFile,
+                fontSettings,
+                layoutSettings,
+                visualizationSettings
+            );
+        }).AsSelf().SingleInstance();
     }
 
     public static void AddServices(this ContainerBuilder builder)
@@ -62,27 +63,23 @@ public static class BuilderExtensions
         builder.RegisterType<TextReader>().As<ITextReader>();
         builder.RegisterType<PngImageSaver>().As<IImageSaver>();
 
-        builder.RegisterType<Tokenizer>()
-            .As<ITokenizer>()
-            .WithParameter("separators", new[] { " ", "\t", "\r\n", "\n", "\r" });
+        builder.RegisterType<Tokenizer>().As<ITokenizer>()
+               .WithParameter("separators", new[] { " ", "\t", "\r\n", "\n", "\r" });
 
-        builder.RegisterType<LowerCaseNormalizer>()
-            .As<IWordNormalizer>()
-            .SingleInstance();
+        builder.RegisterType<LowerCaseNormalizer>().As<IWordNormalizer>();
 
-        builder.RegisterType<BoringWordsFilter>()
-            .As<IWordFilter>()
-            .WithParameter("boringWords", GetDefaultBoringWords())
-            .SingleInstance();
+        builder.RegisterType<BoringWordsFilter>().As<IWordFilter>()
+               .WithParameter("boringWords", GetDefaultBoringWords());
 
         builder.RegisterType<TextProcessor>().As<ITextProcessor>();
 
         builder.RegisterType<FrequencyAnalyzer>().As<IWordWeightAnalyzer>();
 
         builder.RegisterType<GraphicsTextMeasurer>().As<ITextMeasurer>();
+
         builder.RegisterType<WordMetricsCalculator>().As<IWordMetricsCalculator>();
 
-        builder.RegisterType<SpiralFactory>().As<ISpiralFactory>().SingleInstance();
+        builder.RegisterType<SpiralFactory>().As<ISpiralFactory>();
         
         builder.Register(ctx =>
         {
@@ -92,12 +89,36 @@ public static class BuilderExtensions
         }).As<ISpiral>();
 
         builder.RegisterType<SpiralLayouter>().As<ILayouter>();
+
         builder.RegisterType<CloudLayouter>().As<ICloudLayouter>();
+
         builder.RegisterType<CloudVisualizer>().As<ICloudVisualizer>();
 
         builder.RegisterType<ConsoleTagCloudApplication>().AsSelf();
     }
-    
+
+    private static Color ParseColor(string? color)
+    {
+        if (string.IsNullOrWhiteSpace(color))
+            throw new ArgumentException($"Unable to parse color {color}");
+
+        try
+        {
+            return Color.FromName(color);
+        }
+        catch
+        {
+            try
+            {
+                return ColorTranslator.FromHtml(color);
+            }
+            catch
+            {
+                throw new ArgumentException($"Unable to parse color {color}");
+            }
+        }
+    }
+
     private static HashSet<string> GetDefaultBoringWords()
     {
         return new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -117,27 +138,5 @@ public static class BuilderExtensions
             "какое", "какие", "чей", "чья", "чьё", "чьи", "сколько", "который",
             "которая", "которое", "которые"
         };
-    }
-
-    private static Color? ParseColor(string? colorStr)
-    {
-        if (string.IsNullOrWhiteSpace(colorStr))
-            return null;
-
-        try
-        {
-            return Color.FromName(colorStr);
-        }
-        catch
-        {
-            try
-            {
-                return ColorTranslator.FromHtml(colorStr);
-            }
-            catch
-            {
-                return null;
-            }
-        }
     }
 }
