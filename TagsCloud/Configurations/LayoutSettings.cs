@@ -1,10 +1,10 @@
 using System.Drawing;
+using TagsCloud.Layout.Layouters.Geometry;
 
 namespace TagsCloud.Configurations;
 
 public class LayoutSettings
 {
-    public Point Center { get; init; } = new(400, 300);
-    public double SpiralStep { get; init; } = 0.1;
-    public double SpiralAngleStep { get; init; } = 0.1;
+    public Point Center { get; init; }
+    public CloudShape Shape { get; init; } = CloudShape.Circle;
 }

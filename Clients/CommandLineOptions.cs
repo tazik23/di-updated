@@ -1,4 +1,5 @@
 using CommandLine;
+using TagsCloud.Layout.Layouters.Geometry;
 
 namespace Clients;
 
@@ -25,11 +26,10 @@ public class CommandLineOptions
     [Option("center-y", HelpText = "Y coordinate of cloud center (default: 300)")]
     public int? CenterY { get; set; }
 
-    [Option("spiral-step", HelpText = "Spiral step size (default: 0.1)")]
-    public double? SpiralStep { get; set; }
-
-    [Option("spiral-angle-step", HelpText = "Spiral angle step (default: 0.1)")]
-    public double? SpiralAngleStep { get; set; }
+    [Option('s', "shape", 
+        Default = CloudShape.Circle, 
+        HelpText = "Cloud shape. Available values: circle, rectangle")]
+    public CloudShape Shape { get; set; }
 
     [Option("background-color", HelpText = "Background color name or hex (default: White)")]
     public string? BackgroundColor { get; set; }

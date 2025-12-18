@@ -1,3 +1,5 @@
+using TagsCloud.Layout.Layouters.Geometry;
+
 namespace Clients;
 
 public record CommandLineArgs(
@@ -8,8 +10,7 @@ public record CommandLineArgs(
     int? MaxFontSize = null,
     int? CenterX = null,
     int? CenterY = null,
-    double? SpiralStep = null,
-    double? SpiralAngleStep = null,
+    CloudShape Shape = CloudShape.Circle,
     string? BackgroundColor = null,
     string? TextColor = null,
     int? ImageWidth = null,
