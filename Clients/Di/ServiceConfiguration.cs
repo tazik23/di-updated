@@ -33,7 +33,7 @@ public static class ServiceConfiguration
 
         builder.RegisterType<LowerCaseNormalizer>().As<IWordNormalizer>();
 
-        builder.RegisterType<BoringWordsFilter>().As<IWordFilter>()
+        builder.RegisterType<StopWordsFilter>().As<IWordFilter>()
                .WithParameter("boringWords", GetDefaultBoringWords());
 
         builder.RegisterType<TextProcessor>().As<ITextProcessor>();
