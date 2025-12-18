@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using Clients.Applications;
+using Clients.Applications.AppBuilders;
 using CommandLine;
 
 namespace Clients;
@@ -6,41 +7,41 @@ namespace Clients;
 public class Program
 {
     public static void Main(string[] args)
-    {
+    { 
         Parser.Default.ParseArguments<CommandLineOptions>(args)
             .WithParsed(RunApplication);
     }
 
     private static void RunApplication(CommandLineOptions options)
     {
+        var commandLineArgs = new CommandLineArgs(
+            options.InputFile,
+            options.OutputFile,
+            options.FontFamily,
+            options.MinFontSize,
+            options.MaxFontSize,
+            options.CenterX,
+            options.CenterY,
+            options.Shape,
+            options.BackgroundColor,
+            options.TextColor,
+            options.ImageWidth,
+            options.ImageHeight
+        );
         try
         {
-            var commandLineArgs = new CommandLineArgs(
-                options.InputFile,
-                options.OutputFile,
-                options.FontFamily,
-                options.MinFontSize,
-                options.MaxFontSize,
-                options.CenterX,
-                options.CenterY,
-                options.SpiralStep,
-                options.SpiralAngleStep,
-                options.BackgroundColor,
-                options.TextColor,
-                options.ImageWidth,
-                options.ImageHeight
-            );
-
-            var container = DiContainer.BuildContainer(commandLineArgs);
-            using var scope = container.BeginLifetimeScope();
-            var application = scope.Resolve<TagCloudApplication>();
-
+            var builder = ConsoleTagCloudApplication.CreateBuilder();
+        
+            builder.Container.ConfigureSettings(commandLineArgs);
+            builder.Container.AddServices();
+            
+            var application = builder.Build();
+            
             application.Run();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Fatal error: {ex.Message}");
-            Console.WriteLine(ex.StackTrace);
+            Console.WriteLine($"Error: {ex.Message}");
             Environment.Exit(1);
         }
     }
