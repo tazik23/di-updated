@@ -5,13 +5,13 @@ namespace Clients;
 public record CommandLineArgs(
     string InputFile,
     string OutputFile,
-    string? FontFamily = null,
-    int? MinFontSize = null,
-    int? MaxFontSize = null,
-    int? CenterX = null,
-    int? CenterY = null,
-    CloudShape Shape = CloudShape.Circle,
-    string? BackgroundColor = null,
-    string? TextColor = null,
-    int? ImageWidth = null,
-    int? ImageHeight = null);
+    string FontFamily,
+    int MinFontSize,
+    int MaxFontSize,
+    int? CenterX,
+    int? CenterY,
+    CloudShape Shape,
+    string BackgroundColor,
+    string TextColor,
+    int ImageWidth,
+    int ImageHeight);

@@ -1,4 +1,5 @@
 using CommandLine;
+using TagsCloud.Layout;
 using TagsCloud.Layout.Layouters.Geometry;
 
 namespace Clients;
@@ -11,19 +12,19 @@ public class CommandLineOptions
     [Option('o', "output", Required = true, HelpText = "Output image file path (.png)")]
     public string OutputFile { get; set; } = string.Empty;
 
-    [Option("font-family", HelpText = "Font family name (default: Arial)")]
-    public string? FontFamily { get; set; }
+    [Option("font-family", Default = "Arial", HelpText = "Font family name")]
+    public string FontFamily { get; set; } = null!;
 
-    [Option("min-font-size", HelpText = "Minimum font size (default: 10)")]
-    public int? MinFontSize { get; set; }
+    [Option("min-font-size", Default = 10, HelpText = "Minimum font size")]
+    public int MinFontSize { get; set; }
 
-    [Option("max-font-size", HelpText = "Maximum font size (default: 100)")]
-    public int? MaxFontSize { get; set; }
+    [Option("max-font-size", Default = 50, HelpText = "Maximum font size")]
+    public int MaxFontSize { get; set; }
 
-    [Option("center-x", HelpText = "X coordinate of cloud center (default: 400)")]
+    [Option("center-x", HelpText = "X coordinate of cloud center")]
     public int? CenterX { get; set; }
 
-    [Option("center-y", HelpText = "Y coordinate of cloud center (default: 300)")]
+    [Option("center-y", HelpText = "Y coordinate of cloud center")]
     public int? CenterY { get; set; }
 
     [Option('s', "shape", 
@@ -31,18 +32,15 @@ public class CommandLineOptions
         HelpText = "Cloud shape. Available values: circle, rectangle")]
     public CloudShape Shape { get; set; }
 
-    [Option("background-color", HelpText = "Background color name or hex (default: White)")]
-    public string? BackgroundColor { get; set; }
+    [Option("background-color", Default = "White", HelpText = "Background color name")]
+    public string BackgroundColor { get; set; } = null!;
 
-    [Option("text-color", HelpText = "Text color name or hex (default: Black)")]
-    public string? TextColor { get; set; }
+    [Option("text-color", Default = "Black", HelpText = "Text color name")]
+    public string TextColor { get; set; } = null!;
 
-    [Option("image-width", HelpText = "Image width in pixels (default: 800)")]
-    public int? ImageWidth { get; set; }
+    [Option("image-width", Default = 800, HelpText = "Image width in pixels")]
+    public int ImageWidth { get; set; }
 
-    [Option("image-height", HelpText = "Image height in pixels (default: 600)")]
-    public int? ImageHeight { get; set; }
-
-    [Option('h', "help", HelpText = "Display help")]
-    public bool Help { get; set; }
+    [Option("image-height", Default = 600, HelpText = "Image height in pixels")]
+    public int ImageHeight { get; set; }
 }

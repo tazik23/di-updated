@@ -32,20 +32,22 @@ public static class BuilderExtensions
                 OutputPath = cmdArgs.OutputFile,
                 FontSettings = new FontSettings
                 {
-                    FontFamily = new FontFamily(cmdArgs.FontFamily ?? "Arial"),
-                    MinFontSize = cmdArgs.MinFontSize ?? 10,
-                    MaxFontSize = cmdArgs.MaxFontSize ?? 50
+                    FontFamily = new FontFamily(cmdArgs.FontFamily),
+                    MinFontSize = cmdArgs.MinFontSize,
+                    MaxFontSize = cmdArgs.MaxFontSize
                 },
                 LayoutOptions = new LayoutSettings
                 {
-                    Center = new Point(cmdArgs.CenterX ?? 600, cmdArgs.CenterY ?? 500),
+                    Center = new Point(
+                        cmdArgs.CenterX ?? cmdArgs.ImageWidth / 2,
+                        cmdArgs.CenterY ?? cmdArgs.ImageHeight / 2),
                     Shape = cmdArgs.Shape
                 },
                 VisualizationSettings = new VisualizationSettings
                 {
                     BackgroundColor = ParseColor(cmdArgs.BackgroundColor) ?? Color.White,
                     TextColor = ParseColor(cmdArgs.TextColor) ?? Color.Black,
-                    ImageSize = new Size(cmdArgs.ImageWidth ?? 1200, cmdArgs.ImageHeight ?? 1000)
+                    ImageSize = new Size(cmdArgs.ImageWidth, cmdArgs.ImageHeight)
                 }
             };
         }).As<CloudSettings>().SingleInstance();
