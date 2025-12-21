@@ -19,7 +19,6 @@ namespace Clients.Di;
 
 public static class ServiceConfiguration
 {
-
     public static void AddServices(this ContainerBuilder builder)
     {
         builder.RegisterType<TextReader>().As<ITextReader>();
@@ -43,7 +42,7 @@ public static class ServiceConfiguration
         builder.RegisterType<WordMetricsCalculator>().As<IWordMetricsCalculator>();
 
         builder.RegisterType<SpiralFactory>().As<ISpiralFactory>();
-        
+
         builder.Register(ctx =>
         {
             var factory = ctx.Resolve<ISpiralFactory>();
@@ -65,9 +64,11 @@ public static class ServiceConfiguration
         builder.Register(ctx =>
         {
             var options = ctx.Resolve<TextProcessingSettings>();
-            var normalizers = new List<IWordNormalizer> {
-                new LowerCaseNormalizer() };
-            
+            var normalizers = new List<IWordNormalizer>
+            {
+                new LowerCaseNormalizer()
+            };
+
             return normalizers.ToArray();
         }).As<IWordNormalizer[]>();
     }
@@ -78,32 +79,32 @@ public static class ServiceConfiguration
         {
             var options = ctx.Resolve<TextProcessingSettings>();
             var filters = new List<IWordFilter>();
-            
+
             if (!string.IsNullOrEmpty(options.StopWordsFilePath) && File.Exists(options.StopWordsFilePath))
             {
                 var stopWords = LoadStopWordsFromFile(options.StopWordsFilePath);
                 filters.Add(new StopWordsFilter(stopWords));
             }
-            
-            filters.Add(new MinLengthFilter(options.MinLength)); 
-        
+
+            filters.Add(new MinLengthFilter(options.MinLength));
+
             return filters.ToArray();
         }).As<IWordFilter[]>();
     }
-    
+
     private static HashSet<string> LoadStopWordsFromFile(string filePath)
     {
         var stopWords = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-    
+
         foreach (var line in File.ReadLines(filePath))
         {
             var word = line.Trim();
             if (string.IsNullOrWhiteSpace(word))
                 continue;
-            
+
             stopWords.Add(word);
         }
-    
+
         return stopWords;
     }
 }

@@ -7,7 +7,7 @@ namespace Clients;
 public class Program
 {
     public static void Main(string[] args)
-    { 
+    {
         Parser.Default.ParseArguments<CommandLineOptions>(args)
             .WithParsed(RunApplication);
     }
@@ -29,7 +29,7 @@ public class Program
                             options.MaxFontSize)
                         .WithLayoutSettings(
                             new Point(
-                                options.CenterX ?? options.ImageWidth / 2, 
+                                options.CenterX ?? options.ImageWidth / 2,
                                 options.CenterY ?? options.ImageHeight / 2),
                             options.Shape)
                         .WithVisualizationSettings(
@@ -43,7 +43,7 @@ public class Program
                             options.MinLength);
                 });
             });
-            
+
             application.Run();
         }
         catch (Exception ex)

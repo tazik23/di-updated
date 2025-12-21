@@ -11,6 +11,6 @@ public class MinLengthFilter : IWordFilter
 
     public bool ShouldExclude(string word)
     {
-        return word.Length <= _minLength;
+        return word.Length < _minLength;
     }
 }

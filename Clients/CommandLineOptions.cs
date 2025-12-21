@@ -26,8 +26,8 @@ public class CommandLineOptions
     [Option("center-y", HelpText = "Y coordinate of cloud center")]
     public int? CenterY { get; set; }
 
-    [Option('s', "shape", 
-        Default = CloudShape.Circle, 
+    [Option('s', "shape",
+        Default = CloudShape.Circle,
         HelpText = "Cloud shape. Available values: circle, rectangle")]
     public CloudShape Shape { get; set; }
 
@@ -42,19 +42,19 @@ public class CommandLineOptions
 
     [Option("image-height", Default = 600, HelpText = "Image height in pixels")]
     public int ImageHeight { get; set; }
-    
-    [Option("separators", Default = "  , . \t \t\n \r \n", 
+
+    [Option("separators", Default = "  , . \t \t\n \r \n",
         HelpText = "Word separators. Default: \" , . \\r\\n \\t \\r \\n \"")]
     public string? Separators { get; set; }
-    
-    [Option("stop-words-file", 
+
+    [Option("stop-words-file",
         HelpText = "Path to file with stop words (one word per line)")]
     public string? StopWordsFile { get; set; }
-    
-    [Option("use-stemming", Default = false, 
+
+    [Option("use-stemming", Default = false,
         HelpText = "Use stemming to reduce words to their base form")]
     public bool UseStemming { get; set; }
-    
+
     [Option("min-length", Default = 2, HelpText = "")]
     public int MinLength { get; set; }
 }

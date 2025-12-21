@@ -44,14 +44,12 @@ public class RectangularSpiral : ISpiral
                 _currentY -= _step;
                 break;
         }
+
         _currentStep++;
         if (_currentStep >= _segmentsInCurrentLeg)
         {
-            if (_leg % 2 == 1)
-            {
-                _segmentsInCurrentLeg++;
-            }
-            
+            if (_leg % 2 == 1) _segmentsInCurrentLeg++;
+
             _leg = (_leg + 1) % 4;
             _currentStep = 0;
         }

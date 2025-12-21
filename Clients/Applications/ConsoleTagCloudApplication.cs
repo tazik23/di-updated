@@ -23,12 +23,12 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
 
     public ConsoleTagCloudApplication(
         CloudSettings settings,
-        ITextReader reader, 
+        ITextReader reader,
         ITextProcessor processor,
         IWordWeightAnalyzer analyzer,
         IWordMetricsCalculator calculator,
         ICloudLayouter layouter,
-        ICloudVisualizer visualizer, 
+        ICloudVisualizer visualizer,
         IImageSaver saver)
     {
         _settings = settings;
@@ -50,7 +50,7 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
     {
         var builder = CreateBuilder();
         configure(builder);
-        
+
         return builder.Build();
     }
 
@@ -61,7 +61,7 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
             Console.WriteLine($"Reading text from: {_settings.InputPath}");
             var text = _reader.Read(_settings.InputPath);
             Console.WriteLine("Reading completed.");
-            
+
             if (string.IsNullOrWhiteSpace(text))
             {
                 ShowError("Input file is empty. Nothing to process.");
@@ -70,10 +70,12 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
 
             Console.WriteLine("Processing text...");
             var words = _processor.Process(text).ToList();
-            
+
             if (words.Count == 0)
             {
-                ShowWarning($"Found {words.Count} unique words after filtering");
+                ShowWarning("All words were filtered out.");
+                ;
+                return;
             }
 
             Console.WriteLine($"Found {words.Count} unique words after filtering");
@@ -85,11 +87,11 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
             Console.WriteLine("Calculating word metrics...");
             var metrics = _calculator.CalculateWordsMetrics(statistics).ToList();
             Console.WriteLine("Metrics calculation completed.");
-            
+
             Console.WriteLine("Arranging words in cloud...");
             var tags = _layouter.Arrange(metrics).ToList();
             Console.WriteLine("Arrangement completed.");
-            
+
             Console.WriteLine("Generating image...");
             var image = _visualizer.Visualize(tags);
             Console.WriteLine("Image generation completed.");
@@ -106,6 +108,7 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
             throw;
         }
     }
+
     private static void ShowError(string message)
     {
         var originalColor = Console.ForegroundColor;
