@@ -58,48 +58,48 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
     {
         try
         {
-            Console.WriteLine($"Reading text from: {_settings.InputPath}");
+            Console.Clear();
+            Console.WriteLine($"\nReading text from: {_settings.InputPath}");
             var text = _reader.Read(_settings.InputPath);
             Console.WriteLine("Reading completed.");
 
             if (string.IsNullOrWhiteSpace(text))
             {
-                ShowError("Input file is empty. Nothing to process.");
+                ShowError("\nInput file is empty. Nothing to process.");
                 return;
             }
 
-            Console.WriteLine("Processing text...");
+            Console.WriteLine("\nProcessing text...");
             var words = _processor.Process(text).ToList();
 
             if (words.Count == 0)
             {
-                ShowWarning("All words were filtered out.");
+                ShowWarning("\nAll words were filtered out.");
                 return;
             }
-
             Console.WriteLine($"Found {words.Count} words after filtering");
 
-            Console.WriteLine("Analyzing word frequencies...");
+            Console.WriteLine("\nAnalyzing word frequencies...");
             var statistics = _analyzer.Analyze(words).ToList();
             Console.WriteLine($"Analyzed {statistics.Count} unique words");
 
-            Console.WriteLine("Calculating word metrics...");
+            Console.WriteLine("\nCalculating word metrics...");
             var metrics = _calculator.CalculateWordsMetrics(statistics).ToList();
             Console.WriteLine("Metrics calculation completed.");
 
-            Console.WriteLine("Arranging words in cloud...");
+            Console.WriteLine("\nArranging words in cloud...");
             var tags = _layouter.Arrange(metrics).ToList();
             Console.WriteLine("Arrangement completed.");
 
-            Console.WriteLine("Generating image...");
+            Console.WriteLine("\nGenerating image...");
             var image = _visualizer.Visualize(tags);
             Console.WriteLine("Image generation completed.");
 
-            Console.WriteLine($"Saving image to: {_settings.OutputPath}");
+            Console.WriteLine($"\nSaving image to: {_settings.OutputPath}");
             _saver.Save(image, _settings.OutputPath);
 
-            Console.WriteLine("Done!");
-            Console.WriteLine($"Cloud saved to: {Path.GetFullPath(_settings.OutputPath)}");
+            Console.WriteLine("\nDone!");
+            Console.WriteLine($"\nCloud saved to: {Path.GetFullPath(_settings.OutputPath)}");
         }
         catch (Exception ex)
         {
