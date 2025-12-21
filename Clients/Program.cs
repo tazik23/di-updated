@@ -37,7 +37,7 @@ public class Program
                             ParseColor(options.TextColor),
                             new Size(options.ImageWidth, options.ImageHeight))
                         .WithTextProcessingSettings(
-                            options.Separators?.Split(' '),
+                            options.Separators.Split(' '),
                             options.UseStemming,
                             options.StopWordsFile,
                             options.MinLength);

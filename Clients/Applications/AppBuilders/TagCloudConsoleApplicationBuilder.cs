@@ -26,6 +26,7 @@ public class TagCloudConsoleApplicationBuilder : ITagCloudApplicationBuilder
         Container.RegisterInstance(cloudSettings.FontSettings).AsSelf().SingleInstance();
         Container.RegisterInstance(cloudSettings.LayoutSettings).AsSelf().SingleInstance();
         Container.RegisterInstance(cloudSettings.VisualizationSettings).AsSelf().SingleInstance();
+        Container.RegisterInstance(cloudSettings.TextProcessingSettings).AsSelf().SingleInstance();
 
         return this;
     }

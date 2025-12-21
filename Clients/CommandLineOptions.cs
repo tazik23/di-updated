@@ -45,7 +45,7 @@ public class CommandLineOptions
 
     [Option("separators", Default = "  , . \t \t\n \r \n",
         HelpText = "Word separators. Default: \" , . \\r\\n \\t \\r \\n \"")]
-    public string? Separators { get; set; }
+    public string Separators { get; set; }
 
     [Option("stop-words-file",
         HelpText = "Path to file with stop words (one word per line)")]
