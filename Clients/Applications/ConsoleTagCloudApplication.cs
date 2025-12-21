@@ -46,6 +46,14 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
         return new TagCloudConsoleApplicationBuilder();
     }
 
+    public static ITagCloudApplication Create(Action<ITagCloudApplicationBuilder> configure)
+    {
+        var builder = CreateBuilder();
+        configure(builder);
+        
+        return builder.Build();
+    }
+
     public void Run()
     {
         try
