@@ -74,15 +74,14 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
             if (words.Count == 0)
             {
                 ShowWarning("All words were filtered out.");
-                ;
                 return;
             }
 
-            Console.WriteLine($"Found {words.Count} unique words after filtering");
+            Console.WriteLine($"Found {words.Count} words after filtering");
 
             Console.WriteLine("Analyzing word frequencies...");
             var statistics = _analyzer.Analyze(words).ToList();
-            Console.WriteLine($"Analyzed {statistics.Count} words");
+            Console.WriteLine($"Analyzed {statistics.Count} unique words");
 
             Console.WriteLine("Calculating word metrics...");
             var metrics = _calculator.CalculateWordsMetrics(statistics).ToList();

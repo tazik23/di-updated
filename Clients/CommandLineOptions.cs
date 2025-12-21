@@ -43,7 +43,7 @@ public class CommandLineOptions
     [Option("image-height", Default = 600, HelpText = "Image height in pixels")]
     public int ImageHeight { get; set; }
 
-    [Option("separators", Default = "  , . \t \t\n \r \n",
+    [Option("separators", Default = "  , . \t \r\n \r \n",
         HelpText = "Word separators. Default: \" , . \\r\\n \\t \\r \\n \"")]
     public string Separators { get; set; }
 
