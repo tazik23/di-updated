@@ -1,5 +1,5 @@
-﻿using Clients.Applications;
-using Clients.Di;
+﻿using System.Drawing;
+using Clients.Applications;
 using CommandLine;
 
 namespace Clients;
@@ -14,29 +14,35 @@ public class Program
 
     private static void RunApplication(CommandLineOptions options)
     {
-        var commandLineArgs = new CommandLineArgs(
-            options.InputFile,
-            options.OutputFile,
-            options.FontFamily,
-            options.MinFontSize,
-            options.MaxFontSize,
-            options.CenterX,
-            options.CenterY,
-            options.Shape,
-            options.BackgroundColor,
-            options.TextColor,
-            options.ImageWidth,
-            options.ImageHeight,
-            options.Separators
-        );
         try
         {
-            var builder = ConsoleTagCloudApplication.CreateBuilder();
-        
-            builder.Container.ConfigureSettings(commandLineArgs);
-            builder.Container.AddServices();
-            
-            var application = builder.Build();
+            var application = ConsoleTagCloudApplication.Create(builder =>
+            {
+                builder.ConfigureSettings(settingsBuilder =>
+                {
+                    settingsBuilder
+                        .WithInputPath(options.InputFile)
+                        .WithOutputPath(options.OutputFile)
+                        .WithFontSettings(
+                            new FontFamily(options.FontFamily),
+                            options.MinFontSize,
+                            options.MaxFontSize)
+                        .WithLayoutSettings(
+                            new Point(
+                                options.CenterX ?? options.ImageWidth / 2, 
+                                options.CenterY ?? options.ImageHeight / 2),
+                            options.Shape)
+                        .WithVisualizationSettings(
+                            ParseColor(options.BackgroundColor),
+                            ParseColor(options.TextColor),
+                            new Size(options.ImageWidth, options.ImageHeight))
+                        .WithTextProcessingSettings(
+                            options.Separators?.Split(' '),
+                            options.UseStemming,
+                            options.StopWordsFile,
+                            options.MinLength);
+                });
+            });
             
             application.Run();
         }
@@ -44,6 +50,28 @@ public class Program
         {
             Console.WriteLine($"Error: {ex.Message}");
             Environment.Exit(1);
+        }
+    }
+
+    private static Color ParseColor(string color)
+    {
+        if (string.IsNullOrWhiteSpace(color))
+            throw new ArgumentNullException(nameof(color));
+
+        try
+        {
+            return Color.FromName(color);
+        }
+        catch
+        {
+            try
+            {
+                return ColorTranslator.FromHtml(color);
+            }
+            catch
+            {
+                throw new FormatException("Invalid color format.");
+            }
         }
     }
 }
