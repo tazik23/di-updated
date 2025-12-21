@@ -27,14 +27,13 @@ public static class ServiceConfiguration
 
         builder.Register(ctx =>
         {
-            var settings = ctx.Resolve<CloudSettings>();
-            return new Tokenizer(settings.Separators);
+            var options = ctx.Resolve<TextProcessingSettings>();
+            return new Tokenizer(options.Separators);
         }).As<ITokenizer>();
 
-        builder.RegisterType<LowerCaseNormalizer>().As<IWordNormalizer>();
+        builder.RegisterNormalizers();
+        builder.RegisterFilters();
 
-        builder.Register(_ => new StopWordsFilter(GetDefaultBoringWords())).As<IWordFilter>();
-        
         builder.RegisterType<TextProcessor>().As<ITextProcessor>();
 
         builder.RegisterType<FrequencyAnalyzer>().As<IWordWeightAnalyzer>();
@@ -60,25 +59,51 @@ public static class ServiceConfiguration
 
         builder.RegisterType<ConsoleTagCloudApplication>().AsSelf();
     }
-    
-    private static HashSet<string> GetDefaultBoringWords()
+
+    private static void RegisterNormalizers(this ContainerBuilder builder)
     {
-        return new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        builder.Register(ctx =>
         {
-            "и", "в", "не", "на", "я", "что", "он", "с", "а", "как", "то",
-            "но", "его", "она", "они", "мы", "вы", "это", "из", "у", "за",
-            "по", "от", "к", "до", "для", "о", "же", "бы", "быть", "сказать",
-            "только", "весь", "ещё", "уже", "вот", "когда", "даже", "мне",
-            "там", "себя", "ни", "чем", "при", "да", "нет", "если", "так",
-            "их", "был", "ему", "того", "или", "чтобы", "ли", "тоже", "него",
-            "под", "без", "раз", "нам", "со", "будет", "ж", "тот", "зачем",
-            "сейчас", "потом", "очень", "хорошо", "здесь", "тогда", "можно",
-            "который", "другой", "мой", "свой", "наш", "ваш", "свои", "сам",
-            "им", "ей", "тебя", "меня", "него", "нее", "них", "нас", "вас",
-            "ими", "вами", "нами", "мной", "тобой", "собой", "кем", "чем",
-            "кого", "чего", "кому", "чему", "ком", "чём", "какой", "какая",
-            "какое", "какие", "чей", "чья", "чьё", "чьи", "сколько", "который",
-            "которая", "которое", "которые"
-        };
+            var options = ctx.Resolve<TextProcessingSettings>();
+            var normalizers = new List<IWordNormalizer> {
+                new LowerCaseNormalizer() };
+            
+            return normalizers.ToArray();
+        }).As<IWordNormalizer[]>();
+    }
+
+    private static void RegisterFilters(this ContainerBuilder builder)
+    {
+        builder.Register(ctx =>
+        {
+            var options = ctx.Resolve<TextProcessingSettings>();
+            var filters = new List<IWordFilter>();
+            
+            if (!string.IsNullOrEmpty(options.StopWordsFilePath) && File.Exists(options.StopWordsFilePath))
+            {
+                var stopWords = LoadStopWordsFromFile(options.StopWordsFilePath);
+                filters.Add(new StopWordsFilter(stopWords));
+            }
+            
+            filters.Add(new MinLengthFilter(options.MinLength)); 
+        
+            return filters.ToArray();
+        }).As<IWordFilter[]>();
+    }
+    
+    private static HashSet<string> LoadStopWordsFromFile(string filePath)
+    {
+        var stopWords = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    
+        foreach (var line in File.ReadLines(filePath))
+        {
+            var word = line.Trim();
+            if (string.IsNullOrWhiteSpace(word))
+                continue;
+            
+            stopWords.Add(word);
+        }
+    
+        return stopWords;
     }
 }
