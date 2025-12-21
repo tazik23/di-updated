@@ -32,7 +32,7 @@ public class CommandLineOptionsTests
         options.TextColor.Should().Be("Black");
         options.ImageWidth.Should().Be(800);
         options.ImageHeight.Should().Be(600);
-        options.UseStemming.Should().BeFalse();
+        options.UseLemmatization.Should().BeFalse();
         options.MinLength.Should().Be(2);
     }
 
@@ -65,7 +65,7 @@ public class CommandLineOptionsTests
             "--image-height", "768",
             "--separators", " ,.;",
             "--stop-words-file", "stopwords.txt",
-            "--use-stemming",
+            "--use-lemmatization",
             "--min-length", "3"
         };
 
@@ -86,7 +86,7 @@ public class CommandLineOptionsTests
         options.ImageHeight.Should().Be(768);
         options.Separators.Should().Be(" ,.;");
         options.StopWordsFile.Should().Be("stopwords.txt");
-        options.UseStemming.Should().BeTrue();
+        options.UseLemmatization.Should().BeTrue();
         options.MinLength.Should().Be(3);
     }
 }

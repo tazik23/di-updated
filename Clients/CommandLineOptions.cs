@@ -53,7 +53,7 @@ public class CommandLineOptions
 
     [Option("use-lemmatization", Default = false,
         HelpText = "Use lemmatization to reduce words to their base form")]
-    public bool UseStemming { get; set; }
+    public bool UseLemmatization { get; set; }
 
     [Option("min-length", Default = 2, HelpText = "")]
     public int MinLength { get; set; }

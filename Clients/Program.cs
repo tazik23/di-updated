@@ -38,7 +38,7 @@ public class Program
                             new Size(options.ImageWidth, options.ImageHeight))
                         .WithTextProcessingSettings(
                             options.Separators.Split(' '),
-                            options.UseStemming,
+                            options.UseLemmatization,
                             options.StopWordsFile,
                             options.MinLength);
                 });

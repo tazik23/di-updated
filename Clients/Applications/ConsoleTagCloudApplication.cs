@@ -58,7 +58,6 @@ public class ConsoleTagCloudApplication : ITagCloudApplication
     {
         try
         {
-            Console.Clear();
             Console.WriteLine($"\nReading text from: {_settings.InputPath}");
             var text = _reader.Read(_settings.InputPath);
             Console.WriteLine("Reading completed.");
