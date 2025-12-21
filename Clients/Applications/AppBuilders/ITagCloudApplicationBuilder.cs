@@ -6,4 +6,5 @@ public interface ITagCloudApplicationBuilder
 {
     ContainerBuilder Container { get; }
     ITagCloudApplication Build();
+    ITagCloudApplicationBuilder ConfigureSettings(Action<CloudSettingsBuilder> configureSettings);
 }
