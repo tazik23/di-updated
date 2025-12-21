@@ -1,5 +1,7 @@
 using FluentAssertions;
+using Nestor;
 using TagsCloud.TextProcessing.Normalizers;
+using TagsCloud.TextProcessing.Normalizers.LemmaNormalizer;
 
 namespace Tests.TextProcessingTests;
 
@@ -14,6 +16,17 @@ public class NormalizerTests
     {
         var normalizer = new LowerCaseNormalizer();
 
+        normalizer.Normalize(input).Should().Be(expected);
+    }
+    
+    [TestCase("бежали", "бежать")]
+    [TestCase("красивых", "красивый")]
+    [TestCase("собакой", "собака")]
+    [TestCase("пишу", "писать")]
+    public void LemmaNormalizerShouldLemmatize(string input, string expected)
+    {
+        var normalizer = new LemmaNormalizer(new NestorLemmatizer(new NestorMorph()));
+        
         normalizer.Normalize(input).Should().Be(expected);
     }
 }
