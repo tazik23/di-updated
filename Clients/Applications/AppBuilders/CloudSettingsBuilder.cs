@@ -47,9 +47,9 @@ public class CloudSettingsBuilder
     }
 
     public CloudSettingsBuilder WithTextProcessingSettings(
-        string[] separators, bool useStemming, string? stopWordsFilePath, int minLength)
+        string[] separators, bool useLemmatization, string? stopWordsFilePath, int minLength)
     {
-        _textProcessingSettings = new TextProcessingSettings(separators, useStemming, stopWordsFilePath, minLength);
+        _textProcessingSettings = new TextProcessingSettings(separators, useLemmatization, stopWordsFilePath, minLength);
         return this;
     }
 

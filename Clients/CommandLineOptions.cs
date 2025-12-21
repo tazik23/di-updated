@@ -51,8 +51,8 @@ public class CommandLineOptions
         HelpText = "Path to file with stop words (one word per line)")]
     public string? StopWordsFile { get; set; }
 
-    [Option("use-stemming", Default = false,
-        HelpText = "Use stemming to reduce words to their base form")]
+    [Option("use-lemmatization", Default = false,
+        HelpText = "Use lemmatization to reduce words to their base form")]
     public bool UseStemming { get; set; }
 
     [Option("min-length", Default = 2, HelpText = "")]
