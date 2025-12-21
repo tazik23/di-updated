@@ -1,5 +1,6 @@
 using Autofac;
 using Clients.Applications;
+using Nestor;
 using TagsCloud.Configurations;
 using TagsCloud.IO.Readers;
 using TagsCloud.IO.Savers;
@@ -9,6 +10,7 @@ using TagsCloud.Layout.Layouters.Geometry;
 using TagsCloud.TextProcessing;
 using TagsCloud.TextProcessing.Filters;
 using TagsCloud.TextProcessing.Normalizers;
+using TagsCloud.TextProcessing.Normalizers.LemmaNormalizer;
 using TagsCloud.TextProcessing.Tokenizers;
 using TagsCloud.Visualization;
 using TagsCloud.WordAnalysis;
@@ -29,6 +31,9 @@ public static class ServiceConfiguration
             var options = ctx.Resolve<TextProcessingSettings>();
             return new Tokenizer(options.Separators);
         }).As<ITokenizer>();
+        
+        builder.RegisterType<NestorMorph>().AsSelf().SingleInstance();
+        builder.RegisterType<NestorLemmatizer>().As<ILemmatizer>();
 
         builder.RegisterNormalizers();
         builder.RegisterFilters();
@@ -68,6 +73,11 @@ public static class ServiceConfiguration
             {
                 new LowerCaseNormalizer()
             };
+
+            if (options.UseLemmatization)
+            {
+                normalizers.Add(new LemmaNormalizer(ctx.Resolve<ILemmatizer>()));
+            }
 
             return normalizers.ToArray();
         }).As<IWordNormalizer[]>();
