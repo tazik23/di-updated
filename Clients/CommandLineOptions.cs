@@ -43,7 +43,18 @@ public class CommandLineOptions
     [Option("image-height", Default = 600, HelpText = "Image height in pixels")]
     public int ImageHeight { get; set; }
     
-    [Option("separators", Default = " ,.\t\r\n", 
-        HelpText = "Word separators. Use escape sequences: \\t for tab, \\n for newline, \\r for carriage return. Default: \" ,.\\t\\r\\n\"")]
+    [Option("separators", Default = "  , . \t \t\n \r \n", 
+        HelpText = "Word separators. Default: \" , . \\r\\n \\t \\r \\n \"")]
     public string? Separators { get; set; }
+    
+    [Option("stop-words-file", 
+        HelpText = "Path to file with stop words (one word per line)")]
+    public string? StopWordsFile { get; set; }
+    
+    [Option("use-stemming", Default = false, 
+        HelpText = "Use stemming to reduce words to their base form")]
+    public bool UseStemming { get; set; }
+    
+    [Option("min-length", Default = 2, HelpText = "")]
+    public int MinLength { get; set; }
 }

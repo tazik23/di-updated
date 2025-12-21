@@ -4,7 +4,7 @@ public record CloudSettings(
     string InputPath,
     string OutputPath,
     FontSettings FontSettings,
-    LayoutSettings LayoutOptions,
+    LayoutSettings LayoutSettings,
     VisualizationSettings VisualizationSettings,
-    string[] Separators
+    TextProcessingSettings TextProcessingSettings
 );
